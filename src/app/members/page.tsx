@@ -1,6 +1,7 @@
 import React from 'react'
 import { getMembers } from '../actions/memberActions'
 import MemberCard from './MemberCard';
+
 export default async function MembersPage() {
 
   const members = await getMembers();
