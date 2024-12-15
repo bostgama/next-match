@@ -1,17 +1,17 @@
 
 "use client";
 import { signOutUser } from '@/app/actions/authActions';
+import { transformImageUrl } from '@/lib/util';
 import { Avatar, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@nextui-org/react'
-import { Session } from 'next-auth'
 import Link from 'next/link'
 import React from 'react'
 
 type Props = {
-    user: Session["user"]
+    userInfo: {name: string | null; image: string | null;} | null
 }
 
 
-export default function UserMenu({ user }: Props) {
+export default function UserMenu({ userInfo }: Props) {
     return (
         <Dropdown placement='bottom-end'>
             <DropdownTrigger>
@@ -20,14 +20,14 @@ export default function UserMenu({ user }: Props) {
                     as="button"
                     className='transition-transform'
                     color="secondary"
-                    name={user?.name || "user avatar"}
+                    name={userInfo?.name || "user avatar"}
                     size="sm"
-                    src={user?.image || "/images/user.png"}
+                    src={transformImageUrl(userInfo?.image) || "/images/user.png"}
                 />
             </DropdownTrigger>
             <DropdownMenu variant='flat' aria-label='user actions menu'>
                 <DropdownItem isReadOnly as="span" className='h-14 flex flex-row' aria-label='username'>
-                    Signed in as {user?.name}
+                    Signed in as {userInfo?.name}
                 </DropdownItem>
                 <DropdownItem as={Link} href='/members/edit'>
                     Edit profile
