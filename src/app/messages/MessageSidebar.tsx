@@ -5,8 +5,14 @@ import {GoInbox} from "react-icons/go"
 import clsx from 'clsx';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Chip } from '@nextui-org/react';
+import useMessagesStore from '@/hooks/useMessageStore';
+import { useShallow } from 'zustand/react/shallow';
 
 export default function MessageSidebar() {
+
+    const {unreadCount} = useMessagesStore(useShallow(state => ({
+        unreadCount: state.unreadCount})));
+
     const searchParams = useSearchParams();
     const router = useRouter();
     const pathname = usePathname();
@@ -37,7 +43,7 @@ export default function MessageSidebar() {
                     <Icon size={25}/>
                     <div className='flex justify-between flex-grow'>
                         <span>{label}</span>
-                        {chip && <Chip>5</Chip>}
+                        {chip && <Chip>{unreadCount}</Chip>}
                     </div>
                     
                 </div>
