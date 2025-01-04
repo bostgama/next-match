@@ -6,6 +6,7 @@ import { useCallback, useEffect, useRef } from "react";
 import useMessagesStore from "./useMessageStore";
 import { useShallow } from "zustand/react/shallow";
 import {NewMessageToast2} from "@/components/NewMessageToast";
+import { newLikeToast } from "@/components/NotificationToast";
 
 export const useNotificationChannel = (userId: string | null) => {
     const channelRef = useRef<Channel | null>(null);
@@ -25,7 +26,11 @@ export const useNotificationChannel = (userId: string | null) => {
             NewMessageToast2(message);
             updateUnreadCount(1);
         }
-    }, [add, pathname, searchParams,updateUnreadCount])
+    }, [add, pathname, searchParams,updateUnreadCount]);
+
+    const handleNewLike = useCallback((data: {name:string, image: string | null, userId: string}) => {
+        newLikeToast(data.name, data.image, data.userId);
+    },[]);
 
 
     useEffect(() => {
@@ -34,17 +39,19 @@ export const useNotificationChannel = (userId: string | null) => {
             channelRef.current = pusherClient.subscribe(`private-${userId}`);
 
             channelRef.current.bind('message:new', handleNewMessage);
+            channelRef.current.bind('like:new', handleNewLike);
 
         }
         return () => {
             if(channelRef.current && channelRef.current.subscribed) {
                 channelRef.current.unsubscribe();
                 channelRef.current.unbind('message:new', handleNewMessage);
+                channelRef.current.unbind('like:new', handleNewMessage);
                 channelRef.current = null;
             }
         }
 
-    }, [userId, handleNewMessage])
+    }, [userId, handleNewMessage, handleNewLike])
 
 
 }
